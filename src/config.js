@@ -2,6 +2,7 @@ const languages = [
   { code: 'ko', label: '개역개정' },
   { code: 'en_kjv', label: 'King James Version' },
   { code: 'en_bbe', label: 'Basic English' },
+  { code: 'he', label: 'Hebrew' },
 ];
 
 const books = [

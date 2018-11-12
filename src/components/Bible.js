@@ -127,7 +127,7 @@ class Bible extends Component {
             <Card key={i} className={classes.card}>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="h5">{ko_abbr} {this.props.chapter}:{i+1}</Typography>
-                {languages.map(lang => (
+                {languages.map(lang => (e[lang.code] &&
                   <Typography key={lang.code} component="p">
                     <strong>({lang.label})</strong>&nbsp;
                     <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
