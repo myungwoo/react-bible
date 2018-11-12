@@ -140,13 +140,13 @@ class Bible extends Component {
           {verses.map((e, i) => (
             <Card key={i} className={classes.card} ref={ref => i+1 === this.props.verse && (this.initVerse = ref)}>
               <CardContent>
-                <Typography gutterBottom variant="h6" component="h5">{ko_abbr} {this.props.chapter}:{i+1}</Typography>
+                <Typography gutterBottom variant="h6" component="h5">{ko_abbr}{this.props.chapter}:{i+1}</Typography>
                 {languages.map(lang => (e[lang.code] &&
                   <Typography key={lang.code} component="p">
                     <strong>({lang.label})</strong>&nbsp;
                     <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
                     <CopyToClipboard
-                      text={`(${ko_abbr} ${this.props.chapter}:${i+1}) ${e[lang.code]}`}
+                      text={`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`}
                       onCopy={this.onCopy}
                       className={classes.copyButton}
                     >
