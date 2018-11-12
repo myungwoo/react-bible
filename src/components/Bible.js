@@ -21,6 +21,7 @@ import { books, languages } from '../config';
 const styles = theme => ({
   root: {
     padding: 20,
+    marginLeft: 0, marginRight: 0,
     width: '100%',
   },
   card: {
