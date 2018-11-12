@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 
@@ -13,7 +13,9 @@ import './css/index.css';
 ReactDOM.render([
   <CssBaseline key="css" />,
   <BrowserRouter key="router">
-    <App />
+    <Switch>
+      <Route path='/' component={App} />
+    </Switch>
   </BrowserRouter>,
 ], document.getElementById('root'));
 

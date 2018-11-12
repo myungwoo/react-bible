@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Redirect } from 'react-router-dom';
@@ -56,6 +57,15 @@ class Bible extends Component {
     this.setState({ snackbarOpen: false });
   };
 
+  componentDidMount() {
+    if (this.initVerse){
+      window.scrollTo({
+        top: ReactDOM.findDOMNode(this.initVerse).offsetTop-70,
+        behavior: "smooth"
+      });
+    }
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -75,6 +85,10 @@ class Bible extends Component {
       return <Redirect to="/" />;
 
     const verseCount = Object.values(chapters)[0][this.props.chapter-1].length;
+    const verse = (this.props.verse && Number(this.props.verse)) || 1;
+    if (!(1 <= verse && verse <= verseCount))
+      return <Redirect to="/" />;
+
     const verses = [];
     for (let i=0;i<verseCount;i++){
       const v = {};
@@ -124,7 +138,7 @@ class Bible extends Component {
         />
         <Grid item xs={12}>
           {verses.map((e, i) => (
-            <Card key={i} className={classes.card}>
+            <Card key={i} className={classes.card} ref={ref => i+1 === this.props.verse && (this.initVerse = ref)}>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="h5">{ko_abbr} {this.props.chapter}:{i+1}</Typography>
                 {languages.map(lang => (e[lang.code] &&
@@ -154,6 +168,7 @@ Bible.propTypes = {
 
   book: PropTypes.string.isRequired,
   chapter: PropTypes.number.isRequired,
+  verse: PropTypes.number,
 };
 
 export default withStyles(styles)(Bible);
