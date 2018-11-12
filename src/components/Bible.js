@@ -8,6 +8,9 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 import IntegrationReactSelect from './IntegrationReactSelect';
 import ContentsContext from './ContentsContext';
@@ -30,6 +33,9 @@ const valueToObj = books.reduce((acc, cur) => { acc[cur.value] = cur; return acc
 
 class Bible extends Component {
   static contextType = ContentsContext;
+  state = {
+    snackbarOpen: false,
+  };
 
   onBookChange = val => {
     if (val.value !== undefined)
@@ -39,6 +45,15 @@ class Bible extends Component {
   onChapterChange = val => {
     if (val.value !== undefined)
       this.props.history.push(`/${this.props.book}/${val.value}`);
+  };
+
+  onCopy = () => {
+    this.setState({ snackbarOpen: true });
+  };
+  handleClose = (evt, reason) => {
+    if (reason === 'clickaway')
+      return;
+    this.setState({ snackbarOpen: false });
   };
 
   render() {
@@ -84,6 +99,29 @@ class Bible extends Component {
             onChange={this.onChapterChange}
           />
         </Grid>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          open={this.state.snackbarOpen}
+          autoHideDuration={3000}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">Copied</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.handleClose}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
         <Grid item xs={12}>
           {verses.map((e, i) => (
             <Card key={i} className={classes.card}>
@@ -95,7 +133,7 @@ class Bible extends Component {
                     <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
                     <CopyToClipboard
                       text={`(${ko_abbr} ${this.props.chapter}:${i+1}) ${e[lang.code]}`}
-                      onCopy={() => alert('복사됨')}
+                      onCopy={this.onCopy}
                       className={classes.copyButton}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
