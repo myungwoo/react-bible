@@ -73,7 +73,7 @@ class Bible extends Component {
   handleClick = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      // behavior: "smooth"
     });
   };
 
@@ -81,7 +81,7 @@ class Bible extends Component {
     if (this.initVerse){
       window.scrollTo({
         top: ReactDOM.findDOMNode(this.initVerse).offsetTop-70,
-        behavior: "smooth"
+        // behavior: "smooth"
       });
     }
   }
