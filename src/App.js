@@ -96,7 +96,7 @@ class App extends Component {
   onKeyDown = evt => {
     if (evt.key !== 'Enter') return;
     const query = evt.target.value;
-    const res = /^\s*([\uAC00-\uD7AF])\s*(\d+):(\d+)\s*$/.exec(query);
+    const res = /^\s*([\uAC00-\uD7AF])\s*(\d+)[\s:](\d+)\s*$/.exec(query);
     if (res === null) return this.setState({ snackbarOpen: true });
     for (const book of books){
       if (book.ko_abbr === res[1]){
