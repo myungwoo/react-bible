@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Grid from '@material-ui/core/Grid';
@@ -10,8 +10,10 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import ForwardIcon from '@material-ui/icons/Forward';
 
 import IntegrationReactSelect from './IntegrationReactSelect';
 import ContentsContext from './ContentsContext';
@@ -29,6 +31,15 @@ const styles = theme => ({
   },
   copyButton: {
     cursor: 'pointer',
+  },
+  button: {
+    margin: theme.spacing.unit,
+    position: 'fixed',
+    bottom: 6,
+    right: 6,
+  },
+  buttonIcon: {
+    fontSize: 30,
   },
 });
 
@@ -101,6 +112,11 @@ class Bible extends Component {
     }
     return (
       <Grid container spacing={16} className={classes.root}>
+        {this.props.chapter < chapterCount && <Link to={`/${this.props.book}/${this.props.chapter+1}`}>
+          <Button variant="fab" color="primary" aria-label="Add" className={classes.button}>
+            <ForwardIcon className={classes.buttonIcon} />
+          </Button>
+        </Link>}
         <Grid item xs={12} md={4} lg={3}>
           <IntegrationReactSelect
             suggestions={books}
