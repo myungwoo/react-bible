@@ -112,6 +112,8 @@ class App extends Component {
               return this.setState({ snackbarOpen: true });
           }
         }
+        this.searchInput.value = '';
+        this.searchInput.blur();
         this.props.history.push(`/${book.value}/${res[2]}/${res[3]}`);
         break;
       }
@@ -152,6 +154,7 @@ class App extends Component {
                 <ArrowForwardIosIcon />
               </div>
               <InputBase
+                inputRef={ref => this.searchInput = ref}
                 placeholder="말씀 바로가기"
                 classes={{
                   root: classes.inputRoot,
