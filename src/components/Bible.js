@@ -70,6 +70,13 @@ class Bible extends Component {
     this.setState({ snackbarOpen: false });
   };
 
+  handleClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
   componentDidMount() {
     if (this.initVerse){
       window.scrollTo({
@@ -112,7 +119,7 @@ class Bible extends Component {
     }
     return (
       <Grid container spacing={16} className={classes.root}>
-        {this.props.chapter < chapterCount && <Link to={`/${this.props.book}/${this.props.chapter+1}`}>
+        {this.props.chapter < chapterCount && <Link to={`/${this.props.book}/${this.props.chapter+1}`} onClick={this.handleClick}>
           <Button variant="fab" color="primary" aria-label="Add" className={classes.button}>
             <ForwardIcon className={classes.buttonIcon} />
           </Button>
