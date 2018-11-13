@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import axios from 'axios';
+import classNames from 'classnames';
 
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -142,7 +143,7 @@ class App extends Component {
       <div className={classes.root}>
         <AppBar position="fixed">
           <Toolbar>
-            <div className={classes.bookIcon}>
+            <div className={classNames(classes.bookIcon, classes.title)}>
               <BookIcon />
             </div>
             <Typography className={classes.title} variant="h6" color="inherit" noWrap>
