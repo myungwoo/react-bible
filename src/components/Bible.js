@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Redirect, Link } from 'react-router-dom';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -76,6 +75,15 @@ class Bible extends Component {
       top: 0,
       // behavior: "smooth"
     });
+  };
+
+  copyText = txt => () => {
+    const el = document.createElement('textarea');
+    el.value = txt;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
   };
 
   componentDidMount() {
@@ -172,14 +180,10 @@ class Bible extends Component {
                     visibleLanguages.map(lang => (e[lang.code] &&
                       <Typography key={lang.code} component="p" variant="subtitle1">
                         <strong>({lang.label})</strong>&nbsp;
-                        <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
-                        <CopyToClipboard
-                          text={`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`}
-                          onCopy={this.onCopy}
-                          className={classes.copyButton}
-                        >
+                        <span>{e[lang.code]}</span>&nbsp;
+                        <span className={classes.copyButton} onClick={this.copyText(`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`)}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                        </CopyToClipboard>
+                        </span>
                       </Typography>
                     ))
                   )}
