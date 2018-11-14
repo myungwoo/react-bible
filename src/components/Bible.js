@@ -170,7 +170,7 @@ class Bible extends Component {
                 <SettingContext.Consumer>
                   {({ visibleLanguages }) => (
                     visibleLanguages.map(lang => (e[lang.code] &&
-                      <Typography key={lang.code} component="p">
+                      <Typography key={lang.code} component="p" variant="subtitle1">
                         <strong>({lang.label})</strong>&nbsp;
                         <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
                         <CopyToClipboard

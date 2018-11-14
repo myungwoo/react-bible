@@ -10,6 +10,8 @@ import * as serviceWorker from './serviceWorker';
 
 import './css/index.css';
 
+window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
+
 ReactDOM.render([
   <CssBaseline key="css" />,
   <BrowserRouter key="router">
