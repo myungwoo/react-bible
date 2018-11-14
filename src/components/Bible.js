@@ -19,6 +19,7 @@ import ContentsContext from './ContentsContext';
 import SettingContext from './SettingContext';
 
 import { books } from '../config';
+import copyText from '../modules/copy-to-clipboard';
 
 const styles = theme => ({
   root: {
@@ -61,7 +62,8 @@ class Bible extends Component {
       this.props.history.push(`/${this.props.book}/${val.value}`);
   };
 
-  onCopy = () => {
+  handleCopyText = txt => () => {
+    copyText(txt);
     this.setState({ snackbarOpen: true });
   };
   handleClose = (evt, reason) => {
@@ -75,15 +77,6 @@ class Bible extends Component {
       top: 0,
       // behavior: "smooth"
     });
-  };
-
-  copyText = txt => () => {
-    const el = document.createElement('textarea');
-    el.value = txt;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
   };
 
   componentDidMount() {
@@ -181,7 +174,7 @@ class Bible extends Component {
                       <Typography key={lang.code} component="p" variant="subtitle1">
                         <strong>({lang.label})</strong>&nbsp;
                         <span>{e[lang.code]}</span>&nbsp;
-                        <span className={classes.copyButton} onClick={this.copyText(`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`)}>
+                        <span className={classes.copyButton} onClick={this.handleCopyText(`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`)}>
                           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         </span>
                       </Typography>
