@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route } from 'react-router-dom';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 
@@ -14,11 +14,11 @@ window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 ReactDOM.render([
   <CssBaseline key="css" />,
-  <BrowserRouter key="router">
+  <HashRouter key="router">
     <Switch>
       <Route path='/' component={App} />
     </Switch>
-  </BrowserRouter>,
+  </HashRouter>,
 ], document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
