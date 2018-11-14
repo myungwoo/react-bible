@@ -167,7 +167,11 @@ class Bible extends Component {
           {verses.map((e, i) => (
             <Card key={i} className={classes.card} ref={ref => i+1 === this.props.verse && (this.initVerse = ref)}>
               <CardContent>
-                <Typography gutterBottom variant="h6" component="h5">{ko_abbr}{this.props.chapter}:{i+1}</Typography>
+                <Typography gutterBottom variant="h6" component="h5">
+                  <span onClick={() => this.props.history.replace(`/${this.props.book}/${this.props.chapter}/${i+1}`)} style={{ cursor: 'pointer' }}>
+                    {ko_abbr}{this.props.chapter}:{i+1}
+                  </span>
+                </Typography>
                 <SettingContext.Consumer>
                   {({ visibleLanguages }) => (
                     visibleLanguages.map(lang => (e[lang.code] &&
