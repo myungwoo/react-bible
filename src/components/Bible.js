@@ -81,8 +81,10 @@ class Bible extends Component {
 
   componentDidMount() {
     if (this.initVerse){
+      // sm(width>=600)보다 작은 상황이면 AppBar의 크기가 줄어드므로 그에 알맞춰 위쪽 공백을 잡는다
+      const topBlank = window.innerWidth < 600 ? 62 : 70;
       window.scrollTo({
-        top: ReactDOM.findDOMNode(this.initVerse).offsetTop-70,
+        top: ReactDOM.findDOMNode(this.initVerse).offsetTop - topBlank,
         // behavior: "smooth"
       });
     }
