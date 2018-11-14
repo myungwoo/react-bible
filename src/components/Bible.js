@@ -17,8 +17,9 @@ import ForwardIcon from '@material-ui/icons/Forward';
 
 import IntegrationReactSelect from './IntegrationReactSelect';
 import ContentsContext from './ContentsContext';
+import SettingContext from './SettingContext';
 
-import { books, languages } from '../config';
+import { books } from '../config';
 
 const styles = theme => ({
   root: {
@@ -166,19 +167,23 @@ class Bible extends Component {
             <Card key={i} className={classes.card} ref={ref => i+1 === this.props.verse && (this.initVerse = ref)}>
               <CardContent>
                 <Typography gutterBottom variant="h6" component="h5">{ko_abbr}{this.props.chapter}:{i+1}</Typography>
-                {languages.map(lang => (e[lang.code] &&
-                  <Typography key={lang.code} component="p">
-                    <strong>({lang.label})</strong>&nbsp;
-                    <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
-                    <CopyToClipboard
-                      text={`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`}
-                      onCopy={this.onCopy}
-                      className={classes.copyButton}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </CopyToClipboard>
-                  </Typography>
-                ))}
+                <SettingContext.Consumer>
+                  {({ visibleLanguages }) => (
+                    visibleLanguages.map(lang => (e[lang.code] &&
+                      <Typography key={lang.code} component="p">
+                        <strong>({lang.label})</strong>&nbsp;
+                        <span dangerouslySetInnerHTML={{__html: e[lang.code]}} />&nbsp;
+                        <CopyToClipboard
+                          text={`(${ko_abbr}${this.props.chapter}:${i+1}) ${e[lang.code]}`}
+                          onCopy={this.onCopy}
+                          className={classes.copyButton}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        </CopyToClipboard>
+                      </Typography>
+                    ))
+                  )}
+                </SettingContext.Consumer>
               </CardContent>
             </Card>
           ))}

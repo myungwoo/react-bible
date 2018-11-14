@@ -15,10 +15,15 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import Loading from './components/Loading';
 import Bible from './components/Bible';
+import SettingModal from './components/SettingModal';
 import ContentsContext from './components/ContentsContext';
+import SettingContext from './components/SettingContext';
+
+import SettingManager from './SettingManager';
 
 import { languages, books } from './config';
 
@@ -79,6 +84,9 @@ const styles = theme => ({
       },
     },
   },
+  settingsIcon: {
+    marginLeft: theme.spacing.unit,
+  },
   container: {
     marginTop: 56,
     [theme.breakpoints.up('sm')]: {
@@ -89,9 +97,11 @@ const styles = theme => ({
 
 
 class App extends Component {
-  state ={
+  state = {
     loading: true,
     snackbarOpen: false,
+    settingModalOpen: false,
+    setting: SettingManager.getSetting(),
   };
 
   onKeyDown = evt => {
@@ -121,10 +131,17 @@ class App extends Component {
     }
   };
 
-  handleClose = (event, reason) => {
+  handleSettingModalOpen = () => this.setState({ settingModalOpen: true });
+  handleSettingModalClose = () => this.setState({ settingModalOpen: false });
+
+  handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway')
       return;
     this.setState({ snackbarOpen: false });
+  };
+
+  reloadSetting = () => {
+    this.setState({ setting: SettingManager.getSetting() });
   };
 
   componentDidMount() {
@@ -164,17 +181,31 @@ class App extends Component {
                 onKeyDown={this.onKeyDown}
               />
             </div>
+            <IconButton
+              className={classes.settingsIcon}
+              onClick={this.handleSettingModalOpen}
+              color="inherit"
+            >
+              <SettingsIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
+        <SettingModal
+          open={this.state.settingModalOpen}
+          onSettingChange={this.reloadSetting}
+          onClose={this.handleSettingModalClose}
+        />
         <div className={classes.container}>
-          <ContentsContext.Provider value={this.state.contents}>
-            <Switch>
-              <Route exact path='/:book' component={props => <Bible book={props.match.params.book} chapter={1} {...props} />} />
-              <Route exact path='/:book/:chapter' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} {...props} />} />
-              <Route exact path='/:book/:chapter/:verse' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} verse={Number(props.match.params.verse)} {...props} />} />
-              <Route path='/' render={() => <Redirect to="/gn" />} />
-            </Switch>
-          </ContentsContext.Provider>
+          <SettingContext.Provider value={this.state.setting}>
+            <ContentsContext.Provider value={this.state.contents}>
+              <Switch>
+                <Route exact path='/:book' component={props => <Bible book={props.match.params.book} chapter={1} {...props} />} />
+                <Route exact path='/:book/:chapter' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} {...props} />} />
+                <Route exact path='/:book/:chapter/:verse' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} verse={Number(props.match.params.verse)} {...props} />} />
+                <Route path='/' render={() => <Redirect to="/gn" />} />
+              </Switch>
+            </ContentsContext.Provider>
+          </SettingContext.Provider>
         </div>
         <Snackbar
           anchorOrigin={{
@@ -183,7 +214,7 @@ class App extends Component {
           }}
           open={this.state.snackbarOpen}
           autoHideDuration={1500}
-          onClose={this.handleClose}
+          onClose={this.handleSnackbarClose}
           ContentProps={{
             'aria-describedby': 'message-id',
           }}
@@ -193,7 +224,7 @@ class App extends Component {
               key="close"
               aria-label="Close"
               color="inherit"
-              onClick={this.handleClose}
+              onClick={this.handleSnackbarClose}
             >
               <CloseIcon />
             </IconButton>,

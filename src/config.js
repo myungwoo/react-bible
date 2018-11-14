@@ -1,9 +1,19 @@
+// 로딩하는 언어 파일 목록
+// 각 절마다 띄워주는 용도 (순서 중요)
 const languages = [
   { code: 'ko', label: '개역개정' },
   { code: 'en_kjv', label: 'King James Version' },
   { code: 'en_bbe', label: 'Basic English' },
   { code: 'he', label: 'Hebrew' },
   { code: 'he_new', label: 'Modern Hebrew' },
+];
+
+// Setting Modal에 띄워주는 용도 (순서 중요)
+const languageGroups = [
+  { codes: ['ko'], label: '개역개정' },
+  { codes: ['en_kjv'], label: 'King James Version' },
+  { codes: ['en_bbe'], label: 'Basic English' },
+  { codes: ['he', 'he_new'], label: 'Hebrew / Modern Hebrew' },
 ];
 
 const books = [
@@ -75,4 +85,4 @@ const books = [
   { label: "요한계시록 (Revelation)", value: "re", ko_abbr: "계" },
 ];
 
-export { books, languages };
+export { languages, languageGroups, books };
