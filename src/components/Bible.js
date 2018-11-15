@@ -44,7 +44,7 @@ const styles = theme => ({
   },
 });
 
-const valueToObj = books.reduce((acc, cur) => { acc[cur.value] = cur; return acc }, {});
+const valueToObj = books.reduce((acc, cur) => { acc[cur.key] = cur; return acc }, {});
 
 class Bible extends Component {
   static contextType = ContentsContext;
@@ -132,8 +132,8 @@ class Bible extends Component {
         </Link>}
         <Grid item xs={12} md={4} lg={3}>
           <IntegrationReactSelect
-            suggestions={books}
-            value={{ label: valueToObj[this.props.book].label, value: this.props.book }}
+            suggestions={books.map(e => ({ label: `${e.ko} (${e.en})`, value: e.key}))}
+            value={{ label: `${valueToObj[this.props.book].ko} (${valueToObj[this.props.book].en})`, value: this.props.book }}
             onChange={this.onBookChange}
           />
         </Grid>

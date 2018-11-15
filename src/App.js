@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import axios from 'axios';
 import classNames from 'classnames';
 
@@ -12,13 +12,21 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import BookIcon from '@material-ui/icons/Book';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 
 import Loading from './components/Loading';
 import Bible from './components/Bible';
+import TorahPortion from './components/TorahPortion';
 import SettingModal from './components/SettingModal';
 import ContentsContext from './components/ContentsContext';
 import SettingContext from './components/SettingContext';
@@ -34,8 +42,15 @@ const styles = theme => ({
   grow: {
     flexGrow: 1,
   },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: theme.spacing.unit,
+    [theme.breakpoints.up('sm')]: {
+      marginRight: 20,
+    },
+  },
   bookIcon: {
-    marginRight: theme.spacing.unit * 1,
+    marginRight: theme.spacing.unit,
   },
   title: {
     display: 'none',
@@ -87,6 +102,9 @@ const styles = theme => ({
   settingsIcon: {
     marginLeft: theme.spacing.unit,
   },
+  sideMenu: {
+    width: 250,
+  },
   container: {
     marginTop: 56,
     [theme.breakpoints.up('sm')]: {
@@ -99,6 +117,7 @@ const styles = theme => ({
 class App extends Component {
   state = {
     loading: true,
+    menuOpen: false,
     snackbarOpen: false,
     settingModalOpen: false,
     setting: SettingManager.getSetting(),
@@ -112,7 +131,7 @@ class App extends Component {
     for (const book of books){
       if (book.ko_abbr === res[1]){
         for (const b of Object.values(this.state.contents)[0]){
-          if (b.abbrev === book.value){
+          if (b.abbrev === book.key){
             const chapterCount = b.chapters.length;
             const chapter = Number(res[2]);
             if (chapter < 1 || chapter > chapterCount)
@@ -125,11 +144,14 @@ class App extends Component {
         }
         this.searchInput.value = '';
         this.searchInput.blur();
-        this.props.history.push(`/${book.value}/${res[2]}/${res[3]}`);
+        this.props.history.push(`/${book.key}/${res[2]}/${res[3]}`);
         break;
       }
     }
   };
+
+  handleOpenMenu = () => this.setState({ menuOpen: true });
+  handleCloseMenu = () => this.setState({ menuOpen: false });
 
   handleSettingModalOpen = () => this.setState({ settingModalOpen: true });
   handleSettingModalClose = () => this.setState({ settingModalOpen: false });
@@ -160,6 +182,9 @@ class App extends Component {
       <div className={classes.root}>
         <AppBar position="fixed">
           <Toolbar>
+            <IconButton className={classes.menuButton} color="inherit" aria-label="Open drawer" onClick={this.handleOpenMenu}>
+              <MenuIcon />
+            </IconButton>
             <div className={classNames(classes.bookIcon, classes.title)}>
               <BookIcon />
             </div>
@@ -190,6 +215,31 @@ class App extends Component {
             </IconButton>
           </Toolbar>
         </AppBar>
+        
+        <Drawer
+          open={this.state.menuOpen}
+          onClose={this.handleCloseMenu}
+        >
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={this.handleCloseMenu}
+            onKeyDown={this.handleCloseMenu}
+          >
+            <div className={classes.sideMenu}>
+              <List component="nav">
+                <ListItem button component={Link} to="/">
+                  <ListItemIcon><BookIcon /></ListItemIcon>
+                  <ListItemText primary="성경보기" />
+                </ListItem>
+                <ListItem button component={Link} to="/torahportions">
+                  <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+                  <ListItemText primary="토라포션" />
+                </ListItem>
+              </List>
+            </div>
+          </div>
+        </Drawer>
         <SettingModal
           open={this.state.settingModalOpen}
           onSettingChange={this.reloadSetting}
@@ -199,6 +249,7 @@ class App extends Component {
           <SettingContext.Provider value={this.state.setting}>
             <ContentsContext.Provider value={this.state.contents}>
               <Switch>
+                <Route exact path='/torahportions' component={TorahPortion} />
                 <Route exact path='/:book' component={props => <Bible book={props.match.params.book} chapter={1} {...props} />} />
                 <Route exact path='/:book/:chapter' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} {...props} />} />
                 <Route exact path='/:book/:chapter/:verse' component={props => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} verse={Number(props.match.params.verse)} {...props} />} />
