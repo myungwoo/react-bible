@@ -28,6 +28,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "cheerio": "^1.0.0-rc.2"
+    "cheerio": "^1.0.0-rc.2",
+    "cwait": "^1.1.2"
   }
 }

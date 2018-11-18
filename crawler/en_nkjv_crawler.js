@@ -1,12 +1,14 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { TaskQueue } = require('cwait');
 
+const taskQueue = new TaskQueue(Promise, 60); // 최대 동시에 처리하는 request의 개수
 
 async function getPage(book, chapter){
-  const { data } = await axios.get(`https://www.biblestudytools.com/nkjv/${book}/${chapter}.html`)
+  const { data } = await (taskQueue.wrap(() => axios.get(`https://www.biblestudytools.com/nkjv/${book}/${chapter}.html`)
     .catch(err => {
       console.log('error', book, chapter);
-    });
+    })))();
   const $ = cheerio.load(data);
   const res = [];
   $('.verse-number').each((i, e) => {
@@ -16,15 +18,15 @@ async function getPage(book, chapter){
 }
 
 async function getBook(book, abbr) {
-  const { data } = await axios.get(`https://www.biblestudytools.com/nkjv/${book}/`);
+  const { data } = await (taskQueue.wrap(() => axios.get(`https://www.biblestudytools.com/nkjv/${book}/`)))();
   const $ = cheerio.load(data);
   const chapterCount = $('.row .col-md-12 .bst-panel .panel-body .pull-left a[href]').length;
   
   const chapters = [];
-  for (let i=0;i<chapterCount;i++){
-    chapters[i] = await getPage(book, i+1);
+  await Promise.all(Array(chapterCount).fill(0).map((e, i) => getPage(book, i+1).then(res => {
+    chapters[i] = res;
     console.log('success', book, i+1);
-  }
+  })));
   return { abbrev: abbr, chapters };
 }
 
