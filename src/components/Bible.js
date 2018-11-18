@@ -104,11 +104,12 @@ class Bible extends Component {
       }
     }
 
-    const chapterCount = Object.values(chapters)[0].length;
+    const chapterCount = Math.max.apply(null, Object.values(chapters).map(e => e.length));
     if (!(1 <= this.props.chapter && this.props.chapter <= chapterCount))
       return <Redirect to="/" />;
 
-    const verseCount = Object.values(chapters)[0][this.props.chapter-1].length;
+    const getLength = arr => (arr && arr.length) || 0;
+    const verseCount = Math.max.apply(null, Object.values(chapters).map(e => getLength(e[this.props.chapter-1])));
     const verse = (this.props.verse && Number(this.props.verse)) || 1;
     if (!(1 <= verse && verse <= verseCount))
       return <Redirect to="/" />;
@@ -117,7 +118,8 @@ class Bible extends Component {
     for (let i=0;i<verseCount;i++){
       const v = {};
       for (const [lang, chapter] of Object.entries(chapters)){
-        v[lang] = chapter[this.props.chapter-1][i];
+        if (this.props.chapter <= chapter.length)
+          v[lang] = chapter[this.props.chapter-1][i];
       }
       verses.push(v);
     }
