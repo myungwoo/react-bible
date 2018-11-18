@@ -2,9 +2,10 @@
 // 각 절마다 띄워주는 용도 (순서 중요)
 const languages = [
   { code: 'ko_gae', label: '개역개정' },
-  { code: 'ko_rhv', label: '개역한글' },
-  { code: 'en_kjv', label: 'King James Version' },
-  { code: 'en_bbe', label: 'Basic English' },
+  // { code: 'ko_rhv', label: '개역한글' },
+  { code: 'en_nkjv', label: 'New King James Version' },
+  // { code: 'en_kjv', label: 'King James Version' },
+  // { code: 'en_bbe', label: 'Basic English' },
   { code: 'he', label: 'Hebrew' },
   { code: 'he_new', label: 'Modern Hebrew' },
 ];
@@ -12,9 +13,10 @@ const languages = [
 // Setting Modal에 띄워주는 용도 (순서 중요)
 const languageGroups = [
   { codes: ['ko_gae'], label: '개역개정' },
-  { codes: ['ko_rhv'], label: '개역한글' },
-  { codes: ['en_kjv'], label: 'King James Version' },
-  { codes: ['en_bbe'], label: 'Basic English' },
+  // { codes: ['ko_rhv'], label: '개역한글' },
+  { codes: ['en_nkjv'], label: 'New King James Version' },
+  // { codes: ['en_kjv'], label: 'King James Version' },
+  // { codes: ['en_bbe'], label: 'Basic English' },
   { codes: ['he', 'he_new'], label: 'Hebrew / Modern Hebrew' },
 ];
 
