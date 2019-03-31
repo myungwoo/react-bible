@@ -116,7 +116,7 @@ class TorahPortion extends Component {
       this.state.rows.push({
         parshas,
         hparshas,
-        koDesc: parshas.map(e => torahPortions[e].koDesc),
+        koDesc: parshas.map(e => torahPortions[e].koDesc).join('; '),
         date: moment(i.greg()).format('LL'),
         hdate: i.toString(),
         torah: parshas.map(e => torahPortions[e].torah),
