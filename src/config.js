@@ -266,6 +266,12 @@ const torahPortions = {
     "prophets": "is 10:32-12:6",
     "gospels": "jo 20:15-20"
   },
+  "Chol HaMo'ed Pesach": {
+    "koDesc": "유월절",
+    "torah": "ex 33:12-34:26",
+    "prophets": "ez 37:1-37:14",
+    "gospels": ""
+  },
   "Achrei Mot": {
     "koDesc": "죽음 후에",
     "torah": "lv 16:1-18:30",
@@ -420,6 +426,12 @@ const torahPortions = {
     "torah": "ex 33:12-34:26",
     "prophets": "ez 38:18-39:16",
     "gospels": "jo 7:31-43"
+  },
+  "Shavuot": {
+    "koDesc": "오순절",
+    "torah": "dt 14:22-16:17",
+    "prophets": "hk 2:20-3:19",
+    "gospels": "jo 4:25-42"
   }
 };
 

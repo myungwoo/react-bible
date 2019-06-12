@@ -55,6 +55,7 @@ const CustomTableCellWithLink = withStyles(theme => ({
   return (
     <CustomTableCell>
       {to.reduce((acc, e) => acc.concat(e.split('; ').map(e => {
+        if (e === '') return '';
         const res = /^(\w+) (\d+):(\d+)/.exec(e);
         const book = res[1];
         const chapter = Number(res[2]);
@@ -99,17 +100,22 @@ class TorahPortion extends Component {
     const hnow = new Hebcal.HDate(moment().add(-1, 'day').toDate()).after(6);
     const thisParsha = hnow.getParsha();
     this.state = { rows: [] };
-    let lastParshas = null;
     for (let i=new Hebcal.HDate(hnow);;i=i.after(6)){
       const parshas = i.getParsha();
-      const hparshas = i.getParsha('h')
-        .map(e => e === 'חי שרה' ? 'חיי שרה' : e); // 하예이 사라에 오타가 있어서 교정하기
+      const hparshas = i.getParsha('h');
 
-      // 유월절이 두 번 나타나는데, 이를 구분할 때 필요
       if (parshas[0] === 'Pesach'){
-        if (lastParshas && lastParshas[0] === 'Pesach'){
+        const prevParshas = i.before(6).getParsha();
+        const nextParshas = i.after(6).getParsha();
+        if (prevParshas[0] === 'Pesach'){
+          // 두 번째 유월절인 경우
           parshas[0] = 'Shemini Shel Pesach';
           hparshas[0] = 'שמיני של פסח';
+        }
+        else if (nextParshas[0] !== 'Pesach'){
+          // 유월절이 한 번만 등장하는 경우
+          parshas[0] = `Chol HaMo'ed Pesach`;
+          hparshas[0] = 'חול המועד פסח';
         }
       }
 
@@ -124,8 +130,6 @@ class TorahPortion extends Component {
         gospels: parshas.map(e => torahPortions[e].gospels),
       });
       if (i.year !== hnow.year && parshas.includes(thisParsha[0])) break;
-
-      lastParshas = parshas;
     }
   }
 
