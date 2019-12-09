@@ -423,6 +423,7 @@ const torahPortions = {
     "gospels": "jo 6:26-35"
   },
   "End-of-Year: Simchat-Torah, Sukkot": {
+    "koDesc": "토라를 기뻐하다, 초막절",
     "torah": "ex 33:12-34:26",
     "prophets": "ez 38:18-39:16",
     "gospels": "jo 7:31-43"
@@ -432,6 +433,24 @@ const torahPortions = {
     "torah": "dt 14:22-16:17",
     "prophets": "hk 2:20-3:19",
     "gospels": "jo 4:25-42"
+  },
+  "Rosh Hashana": {
+    "koDesc": "나팔절",
+    "torah": "gn 21:1-21:34",
+    "prophets": "jr 31:1-19",
+    "gospels": "mt 24:29-36; lk 1:39-55"
+  },
+  "Sukkot": {
+    "koDesc": "초막절",
+    "torah": "lv 22:26-23:44",
+    "prophets": "zc 14:1-21",
+    "gospels": "lk 2:1-20"
+  },
+  "Shmini Atzeret": {
+    "koDesc": "여덟 번째 집회",
+    "torah": "dt 14:22-16:17",
+    "prophets": "1kgs 8:54-9:1",
+    "gospels": "lk 2:21-32"
   }
 };
 

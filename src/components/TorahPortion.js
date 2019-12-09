@@ -156,7 +156,7 @@ class TorahPortion extends Component {
                 {this.state.rows.map((row, i) => {
                   return (
                     <TableRow key={i} className={classes.row}>
-                      <CustomTableCell>{row.parshas.map((e, i) => `${e} (${row.hparshas[i]})`).join(', ')}</CustomTableCell>
+                      <CustomTableCell>{row.parshas.map((e, i) => `${e} (${row.hparshas[i]})`).join('; ')}</CustomTableCell>
                       <CustomTableCell>{row.koDesc}</CustomTableCell>
                       <CustomTableCell>{row.date}</CustomTableCell>
                       <CustomTableCell>{row.hdate}</CustomTableCell>
