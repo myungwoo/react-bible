@@ -114,7 +114,7 @@ class TorahPortion extends Component {
         }
         else if (nextParshas[0] !== 'Pesach'){
           // 유월절이 한 번만 등장하는 경우
-          parshas[0] = `Chol HaMo'ed Pesach`;
+          parshas[0] = `Chol Hamoed Pesach`;
           hparshas[0] = 'חול המועד פסח';
         }
       }

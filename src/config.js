@@ -266,7 +266,7 @@ const torahPortions = {
     "prophets": "is 10:32-12:6",
     "gospels": "jo 20:15-20"
   },
-  "Chol HaMo'ed Pesach": {
+  "Chol Hamoed Pesach": {
     "koDesc": "유월절",
     "torah": "ex 33:12-34:26",
     "prophets": "ez 37:1-37:14",
@@ -451,6 +451,18 @@ const torahPortions = {
     "torah": "dt 14:22-16:17",
     "prophets": "1kgs 8:54-9:1",
     "gospels": "lk 2:21-32"
+  },
+  "Second days of Pesach": {
+    "koDesc": "유월절",
+    "torah": "ex 33:12-34:26",
+    "prophets": "ez 37:1-37:14",
+    "gospels": ""
+  },
+  "Chol hamoed Sukkot": {
+    "koDesc": "초막절",
+    "torah": "ex 33:12-34:26",
+    "prophets": "ez 38:18-39:16",
+    "gospels": ""
   }
 };
 
