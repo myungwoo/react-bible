@@ -27,6 +27,7 @@ const CustomTableCell = withStyles((theme: Theme) => ({
   head: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
+    fontWeight: 'bold',
     fontSize: '0.9rem',
   },
 }))(TableCell);
@@ -114,7 +115,7 @@ const useStyles = makeStyles((theme: Theme) => (
       minWidth: 1000,
     },
     current: {
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: theme.palette.grey[theme.palette.type === 'dark' ? 700 : 300],
     },
   })
 ));
