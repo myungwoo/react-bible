@@ -1,0 +1,44 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+        "plugin:react/recommended",
+        "plugin:prettier/recommended",
+        "prettier",
+        "airbnb/hooks",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react-perf/recommended"
+    ],
+    "plugins": ["simple-import-sort", "@typescript-eslint"],
+    "rules": {
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "CallExpression[callee.object.name='console'][callee.property.name!=/^(warn|error)$/]",
+                "message": "Unexpected property on console object was called"
+            }
+        ],
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error",
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-empty-function": [
+            "error",
+            { "allow": ["arrowFunctions"] }
+        ],
+        "@typescript-eslint/ban-ts-comment": [
+            "error",
+            {
+                "ts-expect-error": "allow-with-description",
+                "ts-ignore": true,
+                "ts-nocheck": "allow-with-description",
+                "ts-check": true
+            }
+        ],
+        "@typescript-eslint/no-unused-vars": "error"
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    }
+}

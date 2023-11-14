@@ -1,6 +1,6 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { Setting } from '../SettingManager';
+import { Setting } from "../SettingManager";
 
 const SettingContext = createContext<Setting | undefined>(undefined);
 

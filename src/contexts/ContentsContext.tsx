@@ -1,10 +1,10 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-export interface Contents{
+export interface Contents {
   [key: string]: {
-    abbrev: string,
-    chapters: string[][],
-  }[],
+    abbrev: string;
+    chapters: string[][];
+  }[];
 }
 
 const ContentsContext = createContext<Contents>({});

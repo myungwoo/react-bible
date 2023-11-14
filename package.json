@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-transform-private-property-in-object": "^7.23.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
@@ -24,7 +23,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src",
+    "format": "eslint --fix src"
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +44,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-property-in-object": "^7.23.3",
+    "eslint": "^8.53.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react-perf": "^3.3.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "prettier": "^3.1.0"
   }
 }
