@@ -23,8 +23,8 @@ import { books, torahPortions } from '../config';
 
 const CustomTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.mode !== 'dark' ? theme.palette.primary.main : undefined,
+    color: theme.palette.mode !== 'dark' ? theme.palette.common.white : undefined,
     fontWeight: 'bold',
     fontSize: '0.9rem',
     textAlign: 'center',

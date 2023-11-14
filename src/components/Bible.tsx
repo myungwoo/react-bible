@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, useTheme, keyframes } from '@mui/material/styles';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -27,6 +27,18 @@ import SettingContext from '../contexts/SettingContext';
 import { books, Language } from '../config';
 import copyText from '../modules/copy-to-clipboard';
 
+const blinkAnimationLight = keyframes`
+50% {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+`;
+
+const blinkAnimationDark = keyframes`
+50% {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+`;
+
 const ContainerGrid = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1),
   marginLeft: 0, marginRight: 0,
@@ -52,6 +64,11 @@ const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: 10,
 }));
 
+const StyledBlinkingCard = styled(Card)(({ theme }) => ({
+  marginBottom: 10,
+  animation: `${theme.palette.mode === 'dark' ? blinkAnimationDark : blinkAnimationLight} 1s linear infinite`,
+}));
+
 const valueToObj = books.reduce((acc: {[key: string]: typeof books[0]}, cur) => { acc[cur.key] = cur; return acc }, {});
 
 const Bible = () => {
@@ -70,8 +87,12 @@ const Bible = () => {
   const topBlank = useMediaQuery(theme.breakpoints.down('sm')) ? 62 : 70;
 
   React.useEffect(() => {
-    if (initVerse.current === null) return;
+    if (initVerse.current === null || params.verse === undefined) return;
     // sm(width>=600)보다 작은 상황이면 AppBar의 크기가 줄어드므로 그에 알맞춰 위쪽 공백을 잡는다
+    setTimeout(() => {
+      if (initVerse.current)
+        initVerse.current.style.animation = 'none';
+    }, 1000);
     const domObj = ReactDOM.findDOMNode(initVerse.current);
     if (domObj instanceof HTMLElement){
       window?.scrollTo({
@@ -81,7 +102,7 @@ const Bible = () => {
     }
     // topBlank가 바뀌었을 때 스크롤이 움직이지 않도록 의도적으로 topBlank를 배제했다.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [book, chapter, verse]);
+  }, [book, chapter, params.verse]);
 
   const onBookChange = (evt: any, val: {label: string, value: string}) => {
     navigate(`/${val.value}`);
@@ -126,7 +147,7 @@ const Bible = () => {
 
   const getLength = (arr: any[]) => (arr && arr.length) || 0;
   const verseCount = Math.max.apply(null, Object.values(chapters).map(e => getLength(e[chapter-1])));
-  if (verse !== undefined && !(1 <= verse && verse <= verseCount))
+  if (!(1 <= verse && verse <= verseCount))
     return <Navigate to='/' />;
 
   const verses: {[key: string]: string}[] = [];
@@ -195,26 +216,29 @@ const Bible = () => {
         ]}
       />
       <Grid item xs={12}>
-        {verses.map((e, i) => (
-          <StyledCard key={i} ref={i+1 === verse ? initVerse : null}>
-            <CardContent>
-              <Typography gutterBottom variant="h6" component="h5">
-                <span onClick={() => navigate(`/${book}/${chapter}/${i+1}`, { replace: true })} style={{ cursor: 'pointer' }}>
-                  {ko_abbr}{chapter}:{i+1}
-                </span>
-              </Typography>
-                {setting?.visibleLanguages.map((lang: Language) => (e[lang.code] &&
-                  <Typography key={lang.code} component="p" variant="subtitle1">
-                    <strong>({lang.label})</strong>&nbsp;
-                    <span>{e[lang.code]}</span>&nbsp;
-                    <CopyButtonWrapper onClick={handleCopyText(`(${ko_abbr}${chapter}:${i+1}) ${e[lang.code]}`)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    </CopyButtonWrapper>
-                  </Typography>
-                ))}
-            </CardContent>
-          </StyledCard>
-        ))}
+        {verses.map((e, i) => {
+          const CardT = i+1 === verse && params.verse !== undefined ? StyledBlinkingCard : StyledCard;
+          return (
+            <CardT key={i} ref={i+1 === verse ? initVerse : null}>
+              <CardContent>
+                <Typography gutterBottom variant="h6" component="h5">
+                  <span onClick={() => navigate(`/${book}/${chapter}/${i+1}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    {ko_abbr}{chapter}:{i+1}
+                  </span>
+                </Typography>
+                  {setting?.visibleLanguages.map((lang: Language) => (e[lang.code] &&
+                    <Typography key={lang.code} component="p" variant="subtitle1">
+                      <strong>({lang.label})</strong>&nbsp;
+                      <span>{e[lang.code]}</span>&nbsp;
+                      <CopyButtonWrapper onClick={handleCopyText(`(${ko_abbr}${chapter}:${i+1}) ${e[lang.code]}`)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                      </CopyButtonWrapper>
+                    </Typography>
+                  ))}
+              </CardContent>
+            </CardT>
+          );
+      })}
       </Grid>
     </ContainerGrid>
   );
