@@ -16,7 +16,7 @@ import {
 import { styled } from "@mui/material/styles";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { books, torahPortions } from "../config";
 
@@ -135,10 +135,23 @@ const TorahPortion = () => {
 
   const today = useMemo(() => new HDate(), []);
 
+  const moveToPrevYear = useCallback(
+    () => navigate(`/torahportions/${year - 1}`),
+    [navigate, year]
+  );
+  const moveToNextYear = useCallback(
+    () => navigate(`/torahportions/${year + 1}`),
+    [navigate, year]
+  );
+  const moveToCurrentYear = useCallback(
+    () => navigate(`/torahportions/${today.getFullYear()}`),
+    [navigate, today]
+  );
+
   // year가 명시되어 있지 않으면 현재 년도를 구해서 redirect
   if (isNaN(year) || year <= 0) {
     const currentYear = today.getFullYear();
-    navigate(`/torahportions/${currentYear}`, { replace: true });
+    return <Navigate to={`/torahportions/${currentYear}`} replace />;
   }
 
   const firstShabbat = new HDate(1, 7, year).onOrAfter(6);
@@ -163,19 +176,6 @@ const TorahPortion = () => {
       parshas,
     });
   }
-
-  const moveToPrevYear = useCallback(
-    () => navigate(`/torahportions/${year - 1}`),
-    [navigate, year]
-  );
-  const moveToNextYear = useCallback(
-    () => navigate(`/torahportions/${year + 1}`),
-    [navigate, year]
-  );
-  const moveToCurrentYear = useCallback(
-    () => navigate(`/torahportions/${today.getFullYear()}`),
-    [navigate, today]
-  );
 
   return (
     <ContainerGrid container>

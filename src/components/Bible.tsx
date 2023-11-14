@@ -25,7 +25,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { books, Language } from "../config";
 import ContentsContext from "../contexts/ContentsContext";
@@ -171,41 +171,11 @@ const Bible = () => {
     });
   }, []);
 
-  if (!Object.prototype.hasOwnProperty.call(valueToObj, book)) navigate("/");
-
-  const chapters: { [key: string]: string[][] } = {};
-  const { ko_abbr } = valueToObj[book];
-  for (const [lang, books] of Object.entries(contents)) {
-    for (const _book of books) {
-      if (_book.abbrev === book) chapters[lang] = _book.chapters;
-    }
-  }
-
-  const chapterCount = Math.max.apply(
-    null,
-    Object.values(chapters).map((e) => e.length)
-  );
-  if (!(1 <= chapter && chapter <= chapterCount)) navigate("/");
-
-  const getLength = (arr: string[]) => (arr && arr.length) || 0;
-  const verseCount = Math.max.apply(
-    null,
-    Object.values(chapters).map((e) => getLength(e[chapter - 1]))
-  );
-  if (!(1 <= verse && verse <= verseCount)) navigate("/");
-
-  const verses: { [key: string]: string }[] = [];
-  for (let i = 0; i < verseCount; i++) {
-    const v: { [key: string]: string } = {};
-    for (const [lang, _chapter] of Object.entries(chapters)) {
-      if (chapter <= _chapter.length) v[lang] = _chapter[chapter - 1][i];
-    }
-    verses.push(v);
-  }
-
   const bookValue = useMemo(
     () => ({
-      label: `${valueToObj[book].ko} (${valueToObj[book].en})`,
+      label: Object.prototype.hasOwnProperty.call(valueToObj, book)
+        ? `${valueToObj[book]?.ko} (${valueToObj[book]?.en})`
+        : "",
       value: book,
     }),
     [book]
@@ -233,6 +203,40 @@ const Bible = () => {
     (verse: number) => () => navigate(`/${book}/${chapter}/${verse}`),
     [book, chapter, navigate]
   );
+
+  if (!Object.prototype.hasOwnProperty.call(valueToObj, book))
+    return <Navigate to="/" replace />;
+
+  const chapters: { [key: string]: string[][] } = {};
+  const { ko_abbr } = valueToObj[book];
+  for (const [lang, books] of Object.entries(contents)) {
+    for (const _book of books) {
+      if (_book.abbrev === book) chapters[lang] = _book.chapters;
+    }
+  }
+
+  const chapterCount = Math.max.apply(
+    null,
+    Object.values(chapters).map((e) => e.length)
+  );
+  if (!(1 <= chapter && chapter <= chapterCount))
+    return <Navigate to="/" replace />;
+
+  const getLength = (arr: string[]) => (arr && arr.length) || 0;
+  const verseCount = Math.max.apply(
+    null,
+    Object.values(chapters).map((e) => getLength(e[chapter - 1]))
+  );
+  if (!(1 <= verse && verse <= verseCount)) return <Navigate to="/" replace />;
+
+  const verses: { [key: string]: string }[] = [];
+  for (let i = 0; i < verseCount; i++) {
+    const v: { [key: string]: string } = {};
+    for (const [lang, _chapter] of Object.entries(chapters)) {
+      if (chapter <= _chapter.length) v[lang] = _chapter[chapter - 1][i];
+    }
+    verses.push(v);
+  }
 
   return (
     <ContainerGrid container spacing={2}>

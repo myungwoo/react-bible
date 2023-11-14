@@ -286,7 +286,7 @@ const App = () => {
               <Route path="/:book" element={<Bible />} />
               <Route path="/:book/:chapter" element={<Bible />} />
               <Route path="/:book/:chapter/:verse" element={<Bible />} />
-              <Route path="*" element={<Navigate to="/gn" />} />
+              <Route path="*" element={<Navigate to="/gn" replace />} />
             </Routes>
           </ContentsContext.Provider>
         </SettingContext.Provider>
