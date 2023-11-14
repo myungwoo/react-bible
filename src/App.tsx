@@ -130,11 +130,11 @@ const App = () => {
     setSetting(getSetting());
     const contents: Contents = {};
     const promises = languages.map((e) =>
-      fetch(`/json/${e.code}.json`).then((res) =>
-        res.json().then((data) => {
+      fetch(`/json/${e.code}.json`)
+        .then((res) => res.json())
+        .then((data) => {
           contents[e.code] = data;
         })
-      )
     );
     Promise.all(promises).then(() => setContents(contents));
   }, []);
