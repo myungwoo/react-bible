@@ -440,7 +440,7 @@ const torahPortions: {[key: string]: {
     "prophets": "ho 14:2-10; mi 7:18-20; jl 2:15-27",
     "gospels": "mt 21:9-17"
   },
-  "Ha'Azinu": {
+  "Ha'azinu": {
     "koDesc": "들으라, 귀를 기울이라",
     "torah": "dt 32:1-32:52",
     "prophets": "2sm 22:1-51",

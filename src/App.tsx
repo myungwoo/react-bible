@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Switch, Route, Redirect, Link, useHistory, RouteComponentProps } from 'react-router-dom';
-import axios from 'axios';
-import classNames from 'classnames';
+import React, { useEffect, useRef, useState } from 'react';
+import { styled, alpha } from '@mui/material/styles';
+import { Link, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 
 import {
   AppBar,
   Drawer,
   IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Snackbar,
   Toolbar,
   Typography,
   InputBase,
-  fade,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import {
   ArrowForwardIos as ArrowForwardIosIcon,
@@ -26,115 +23,105 @@ import {
   Close as CloseIcon,
   Menu as MenuIcon,
   Settings as SettingsIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 import Loading from './components/Loading';
 import Bible from './components/Bible';
 import TorahPortion from './components/TorahPortion';
 import SettingModal from './components/SettingModal';
-import ContentsContext, { Contents } from './components/ContentsContext';
-import SettingContext from './components/SettingContext';
+import ContentsContext, { Contents } from './contexts/ContentsContext';
+import SettingContext from './contexts/SettingContext';
 
-import SettingManager, { Setting } from './SettingManager';
+import { Setting, getSetting } from './SettingManager';
 
 import { languages, books } from './config';
 
-const useStyles = makeStyles((theme: Theme) => 
-  createStyles({
-    root: {
-      width: '100%',
-    },
-    grow: {
-      flexGrow: 1,
-    },
-    menuButton: {
-      marginLeft: -12,
-      marginRight: theme.spacing(1),
-      [theme.breakpoints.up('sm')]: {
-        marginRight: 20,
-      },
-    },
-    bookIcon: {
-      marginRight: theme.spacing(1),
-    },
-    title: {
-      display: 'none',
-      [theme.breakpoints.up('sm')]: {
-        display: 'block',
-      },
-    },
-    search: {
-      position: 'relative',
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    searchIcon: {
-      width: theme.spacing(9),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
-      width: '100%',
-    },
-    inputInput: {
-      paddingTop: theme.spacing(1),
-      paddingRight: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
-      paddingLeft: theme.spacing(10),
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-          width: 200,
-        },
-      },
-    },
-    settingsIcon: {
-      marginLeft: theme.spacing(1),
-    },
-    sideMenu: {
-      width: 250,
-    },
-    container: {
-      marginTop: 56,
-      [theme.breakpoints.up('sm')]: {
-        marginTop: 64,
-      },
-    }
-  })
-);
+const RootWrapper = styled('div')(() => ({
+  width: '100%',
+}));
 
-export default function App(){
-  const [contents, setContents] = React.useState<Contents | null>(null);
-  const [menuOpen, setMenuOpen] = React.useState(false);
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [settingModalOpen, setSettingModalOpen] = React.useState(false);
-  const [setting, setSetting] = React.useState<Setting | null>(null);
-  const searchInput = React.useRef<HTMLInputElement>(null);
-  const history = useHistory();
-  const classes = useStyles();
+const BookIconWrapper = styled('div')(({ theme }) => ({
+  marginRight: theme.spacing(1),
+  display: 'none',
+  [theme.breakpoints.up('sm')]: {
+    display: 'block',
+  },
+}));
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
+
+const SettingsIconButton = styled(IconButton)(({ theme }) => ({
+  marginLeft: theme.spacing(1),
+}));
+
+const SideMenu = styled('div')(({ theme }) => ({
+  width: 250,
+}));
+
+const Container = styled('div')(({ theme }) => ({
+  marginTop: 56,
+  [theme.breakpoints.up('sm')]: {
+    marginTop: 64,
+  },
+}));
+
+const App = () => {
+  const [contents, setContents] = useState<Contents | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [settingModalOpen, setSettingModalOpen] = useState(false);
+  const [setting, setSetting] = useState<Setting | null>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setSetting(SettingManager.getSetting());
+    setSetting(getSetting());
     const contents: Contents = {};
-    const promises = languages.map(e => axios.get(`/json/${e.code}.json`).then(res => {
-      contents[e.code] = res.data;
-    }));
+    const promises = languages.map(e => fetch(`/json/${e.code}.json`).then(res =>
+      res.json().then(data => {
+        contents[e.code] = data;
+      })
+    ));
     Promise.all(promises).then(() => setContents(contents));
   }, []);
 
@@ -161,7 +148,7 @@ export default function App(){
         }
         searchInput.current.value = '';
         searchInput.current?.blur();
-        history.push(`/${book.key}/${res[2]}/${res[3]}`);
+        navigate(`/${book.key}/${res[2]}/${res[3]}`);
         break;
       }
     }
@@ -174,47 +161,53 @@ export default function App(){
   };
 
   const reloadSetting = () => {
-    setSetting(SettingManager.getSetting());
+    setSetting(getSetting());
   };
 
   return (
-    <div className={classes.root}>
+    <RootWrapper>
       <AppBar position="fixed">
         <Toolbar>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Open drawer" onClick={() => setMenuOpen(true)}>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+            onClick={() => setMenuOpen(true)}
+          >
             <MenuIcon />
           </IconButton>
-          <div className={classNames(classes.bookIcon, classes.title)}>
+          <BookIconWrapper>
             <BookIcon />
-          </div>
-          <Typography className={classes.title} variant="h6" color="inherit" noWrap>
+          </BookIconWrapper><Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+          >
             성경 - Holy Bible
           </Typography>
-          <div className={classes.grow} />
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
+          <Search>
+            <SearchIconWrapper>
               <ArrowForwardIosIcon />
-            </div>
-            <InputBase
-              inputRef={searchInput}
+            </SearchIconWrapper>
+            <StyledInputBase
               placeholder="말씀 바로가기"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
+              inputProps={{ 'aria-label': 'search' }}
               onKeyDown={onKeyDown}
+              inputRef={searchInput}
             />
-          </div>
-          <IconButton
-            className={classes.settingsIcon}
-            onClick={() => setSettingModalOpen(true)}
+          </Search>
+          <SettingsIconButton
             color="inherit"
+            onClick={() => setSettingModalOpen(true)}
           >
             <SettingsIcon />
-          </IconButton>
+          </SettingsIconButton>
         </Toolbar>
       </AppBar>
-      
+
       <Drawer
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
@@ -225,18 +218,18 @@ export default function App(){
           onClick={() => setMenuOpen(false)}
           onKeyDown={() => setMenuOpen(false)}
         >
-          <div className={classes.sideMenu}>
+          <SideMenu>
             <List component="nav">
-              <ListItem button component={Link} to="/">
+              <ListItemButton component={Link} to="/">
                 <ListItemIcon><BookIcon /></ListItemIcon>
                 <ListItemText primary="성경보기" />
-              </ListItem>
-              <ListItem button component={Link} to="/torahportions">
+              </ListItemButton>
+              <ListItemButton component={Link} to="/torahportions">
                 <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
                 <ListItemText primary="토라포션" />
-              </ListItem>
+              </ListItemButton>
             </List>
-          </div>
+          </SideMenu>
         </div>
       </Drawer>
       <SettingModal
@@ -244,20 +237,20 @@ export default function App(){
         onSettingChange={reloadSetting}
         onClose={() => setSettingModalOpen(false)}
       />
-      <div className={classes.container}>
+      <Container>
         <SettingContext.Provider value={setting}>
           <ContentsContext.Provider value={contents}>
-            <Switch>
-              <Route exact path='/torahportions' component={TorahPortion} />
-              <Route exact path='/torahportions/:year' component={(props: RouteComponentProps<{year: string}>) => <TorahPortion year={Number(props.match.params.year)} {...props} />} />
-              <Route exact path='/:book' component={(props: RouteComponentProps<{book: string}>) => <Bible book={props.match.params.book} chapter={1} {...props} />} />
-              <Route exact path='/:book/:chapter' component={(props: RouteComponentProps<{book: string, chapter: string}>) => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} {...props} />} />
-              <Route exact path='/:book/:chapter/:verse' component={(props: RouteComponentProps<{book: string, chapter: string, verse: string}>) => <Bible book={props.match.params.book} chapter={Number(props.match.params.chapter)} verse={Number(props.match.params.verse)} {...props} />} />
-              <Route path='/' render={() => <Redirect to="/gn" />} />
-            </Switch>
+            <Routes>
+              <Route path="/torahportions" element={<TorahPortion />} />
+              <Route path='/torahportions/:year' element={<TorahPortion />} />
+              <Route path='/:book' element={<Bible />} />
+              <Route path='/:book/:chapter' element={<Bible />} />
+              <Route path='/:book/:chapter/:verse' element={<Bible />} />
+              <Route path="*" element={<Navigate to="/gn" />} />
+            </Routes>
           </ContentsContext.Provider>
         </SettingContext.Provider>
-      </div>
+      </Container>
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
@@ -281,6 +274,8 @@ export default function App(){
           </IconButton>,
         ]}
       />
-    </div>
+    </RootWrapper>
   );
 };
+
+export default App;

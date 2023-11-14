@@ -1,29 +1,23 @@
 import { languages, Language } from './config';
 
-export interface Setting{
+export interface Setting {
   visibleLanguages: Language[];
 }
 
-class SettingManager {
-  visibleLanguages: Language[];
-  constructor() {
-    this.visibleLanguages = [];
-    this.loadSetting();
-  }
+let visibleLanguages: Language[] = [];
 
-  loadSetting = () => {
-    const unvisibleLanguages = JSON.parse(localStorage.getItem('unvisibleLanguages') || '{}');
-    this.visibleLanguages = languages.filter(l => !unvisibleLanguages.hasOwnProperty(l.code));
-  };
+export const loadSetting = () => {
+  const unvisibleLanguages = JSON.parse(localStorage.getItem('unvisibleLanguages') || '{}');
+  visibleLanguages = languages.filter(l => !unvisibleLanguages.hasOwnProperty(l.code));
+};
 
-  getSetting = (): Setting => ({
-    visibleLanguages: this.visibleLanguages,
-  });
+export const getSetting = (): Setting => ({
+  visibleLanguages,
+});
 
-  saveSetting = (unvisibleLanguages: {[key: string]: boolean}) => {
-    localStorage.setItem('unvisibleLanguages', JSON.stringify(unvisibleLanguages));
-    this.loadSetting();
-  };
-}
+export const saveSetting = (unvisibleLanguages: {[key: string]: boolean}) => {
+  localStorage.setItem('unvisibleLanguages', JSON.stringify(unvisibleLanguages));
+  loadSetting();
+};
 
-export default new SettingManager();
+loadSetting();

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
 import {
   Button,
@@ -13,26 +13,24 @@ import {
   FormControlLabel,
   Switch,
   useMediaQuery,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import SettingManager from '../SettingManager';
+import { getSetting, saveSetting } from '../SettingManager';
 
 import { languageGroups } from '../config';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    gutterBottom: {
-      marginBottom: theme.spacing(1),
-    },
-    modalContent: {
-      paddingBottom: theme.spacing(1),
-    },
-    switchOption: {
-      marginTop: -theme.spacing(0.5),
-      marginBottom: -theme.spacing(0.5),
-    },
-  })
-);
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  paddingBottom: theme.spacing(1),
+}));
+
+const StyledFormLabel = styled(FormLabel)(({ theme }) => ({
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
+  marginTop: -theme.spacing(0.5),
+  marginBottom: -theme.spacing(0.5),
+}));
 
 interface Prop{
   open: boolean;
@@ -40,18 +38,13 @@ interface Prop{
   onClose: () => any;
 }
 
-export default function SettingModal({
-  open,
-  onSettingChange,
-  onClose,
-}: Prop){
+const SettingModal = ({ open, onSettingChange, onClose }: Prop) => {
   const [language, setLanguage] = React.useState<boolean[]>([]);
-  const classes = useStyles();
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    const { visibleLanguages } = SettingManager.getSetting();
+    const { visibleLanguages } = getSetting();
     const visibleCodes = visibleLanguages.reduce((acc, cur) => { acc.add(cur.code); return acc }, new Set());
     const language = Array(languageGroups.length).fill(true);
     languageGroups.forEach((lg, i) => {
@@ -61,7 +54,7 @@ export default function SettingModal({
     setLanguage(language);
   }, []);
 
-  
+
   const handleChange = (i: number) => (evt: any, v: boolean) => {
     language[i] = v;
     setLanguage(language);
@@ -74,10 +67,10 @@ export default function SettingModal({
       }
     });
 
-    SettingManager.saveSetting(unvisibleLanguages);
+    saveSetting(unvisibleLanguages);
     onSettingChange();
   };
-  
+
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -88,14 +81,13 @@ export default function SettingModal({
       aria-labelledby="responsive-dialog-title"
     >
       <DialogTitle id="responsive-dialog-title">설정</DialogTitle>
-      <DialogContent className={classes.modalContent}>
+      <StyledDialogContent>
         <FormControl component="fieldset">
-          <FormLabel component="legend" className={classes.gutterBottom}>표시 언어</FormLabel>
+          <StyledFormLabel>표시 언어</StyledFormLabel>
           <FormGroup>
             {languageGroups.map((obj, i) => (
-              <FormControlLabel
+              <StyledFormControlLabel
                 key={i}
-                classes={{ root: classes.switchOption }}
                 control={
                   <Switch
                     checked={language[i]}
@@ -108,7 +100,7 @@ export default function SettingModal({
             ))}
           </FormGroup>
         </FormControl>
-      </DialogContent>
+      </StyledDialogContent>
       <DialogActions>
         <Button onClick={onClose}>
           닫기
@@ -116,4 +108,6 @@ export default function SettingModal({
       </DialogActions>
     </Dialog>
   );
-}
+};
+
+export default SettingModal;

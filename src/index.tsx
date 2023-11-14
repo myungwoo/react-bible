@@ -1,50 +1,52 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter, Switch, Route } from 'react-router-dom';
-
-import { useMediaQuery } from '@material-ui/core';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import { grey } from '@material-ui/core/colors';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React, { useMemo } from 'react';
+import ReactDOM from 'react-dom/client';
+import { HashRouter } from 'react-router-dom';
 
 import App from './App';
-
 import reportWebVitals from './reportWebVitals';
 
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 import './css/index.css';
 
-function ThemeProvidedApp(){
+const ThemeProvidedApp = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-  const theme = React.useMemo(
+  const theme = useMemo(
     () =>
-      createMuiTheme({
+      createTheme({
         palette: {
-          type: prefersDarkMode ? 'dark' : 'light',
-          primary: prefersDarkMode ? {
-            main: grey[900],
-          } : undefined,
+          mode: prefersDarkMode ? 'dark' : 'light',
+          background: {
+            default: prefersDarkMode ? '#121212' : '#fafafa',
+          }
         },
       }),
     [prefersDarkMode],
   );
-
   return (
-    <MuiThemeProvider theme={theme}>
-      <CssBaseline key="css" />
-      <HashRouter key="router">
-        <Switch>
-          <Route path='/' component={App} />
-        </Switch>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <HashRouter>
+        <App />
       </HashRouter>
-    </MuiThemeProvider>
-  );
-}
+    </ThemeProvider>
+  )
+};
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(
   <React.StrictMode>
     <ThemeProvidedApp />
-  </React.StrictMode>, document.getElementById('root'));
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
