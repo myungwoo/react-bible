@@ -181,7 +181,9 @@ const TorahPortion = () => {
     <ContainerGrid container>
       <Grid item xs={12}>
         <ButtonGroup>
-          <Button onClick={moveToPrevYear}>&lt;</Button>
+          <Button disabled={year === 1} onClick={moveToPrevYear}>
+            &lt;
+          </Button>
           <Button onClick={moveToCurrentYear}>{year}</Button>
           <Button onClick={moveToNextYear}>&gt;</Button>
         </ButtonGroup>
