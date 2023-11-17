@@ -9,7 +9,7 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:react-perf/recommended"
     ],
-    "plugins": ["simple-import-sort", "@typescript-eslint"],
+    "plugins": ["simple-import-sort", "unused-imports", "@typescript-eslint"],
     "rules": {
         "no-restricted-syntax": [
             "error",

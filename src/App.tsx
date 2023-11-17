@@ -192,7 +192,7 @@ const App = () => {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const openSettingModal = useCallback(() => setSettingModalOpen(true), []);
-  const closeSettingModal = useCallback(() => setSettingModalOpen(true), []);
+  const closeSettingModal = useCallback(() => setSettingModalOpen(false), []);
 
   const snackbarAction = useMemo(
     () => [
